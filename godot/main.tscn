@@ -1,5 +1,18 @@
-[gd_scene format=3 uid="uid://cec8837qc5qcs"]
+[gd_scene load_steps=2 format=3 uid="uid://cec8837qc5qcs"]
 
-[node name="Node" type="Node"]
+[ext_resource type="Script" path="res://main.gd" id="1_0i6p4"]
+
+[node name="Node" type="Node" node_paths=PackedStringArray("ecs")]
+script = ExtResource("1_0i6p4")
+ecs = NodePath("BevyECS")
 
 [node name="BevyECS" type="BevyECS" parent="."]
+
+[node name="Button" type="Button" parent="."]
+offset_left = 196.0
+offset_top = 87.0
+offset_right = 295.0
+offset_bottom = 132.0
+text = "try"
+
+[connection signal="pressed" from="Button" to="." method="check_data"]
