@@ -1,18 +1,46 @@
-[gd_scene load_steps=2 format=3 uid="uid://cec8837qc5qcs"]
+[gd_scene load_steps=6 format=3 uid="uid://cec8837qc5qcs"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_0i6p4"]
+[ext_resource type="Script" path="res://pixelcontroller.gd" id="2_kj4mp"]
+[ext_resource type="Script" path="res://fpslabel.gd" id="3_jbrj7"]
+
+[sub_resource type="SystemFont" id="SystemFont_yychh"]
+
+[sub_resource type="Theme" id="Theme_6cywt"]
+default_font = SubResource("SystemFont_yychh")
+Label/colors/font_color = Color(0.917647, 0.937255, 0.933333, 1)
+Label/font_sizes/font_size = 11
 
 [node name="Node" type="Node" node_paths=PackedStringArray("ecs")]
 script = ExtResource("1_0i6p4")
 ecs = NodePath("BevyECS")
 
+[node name="pixel control center" type="ColorRect" parent="." node_paths=PackedStringArray("ecs", "pixel_parent")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = -3.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0705882, 0.0627451, 0.0784314, 1)
+script = ExtResource("2_kj4mp")
+ecs = NodePath("../BevyECS")
+pixel_parent = NodePath("Camera2D")
+
+[node name="Camera2D" type="Camera2D" parent="pixel control center"]
+position = Vector2(569, 325)
+zoom = Vector2(4, 4)
+
+[node name="fps" type="Label" parent="pixel control center/Camera2D"]
+offset_left = -142.0
+offset_top = -78.0
+offset_right = -97.0
+offset_bottom = -32.0
+theme = SubResource("Theme_6cywt")
+text = "what"
+script = ExtResource("3_jbrj7")
+
 [node name="BevyECS" type="BevyECS" parent="."]
-
-[node name="Button" type="Button" parent="."]
-offset_left = 196.0
-offset_top = 87.0
-offset_right = 295.0
-offset_bottom = 132.0
-text = "try"
-
-[connection signal="pressed" from="Button" to="." method="check_data"]

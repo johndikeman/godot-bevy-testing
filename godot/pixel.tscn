@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://4lf0qk7u0nbd"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_o4o7p"]
+
+[node name="Sprite2D" type="Sprite2D"]
+position = Vector2(-209, -6)
+rotation = 3.14159
+scale = Vector2(1, -1.049)
+texture = SubResource("CanvasTexture_o4o7p")
