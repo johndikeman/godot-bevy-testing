@@ -1,6 +1,6 @@
 extends ColorRect
 
-@onready var pixel = preload("res://pixel.tscn")
+@onready var pixel = preload("res://snowflake.tscn")
 @export var ecs: BevyECS
 @export var pixel_parent: Node 
 

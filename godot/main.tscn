@@ -32,7 +32,7 @@ pixel_parent = NodePath("Camera2D")
 
 [node name="Camera2D" type="Camera2D" parent="pixel control center"]
 position = Vector2(569, 325)
-zoom = Vector2(4, 4)
+zoom = Vector2(2, 2)
 
 [node name="fps" type="Label" parent="pixel control center/Camera2D"]
 offset_left = -142.0

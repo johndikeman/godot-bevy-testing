@@ -1,4 +1,3 @@
-use std::task::Wake;
 
 use godot::prelude::*;
 use bevy::prelude::*;
@@ -28,6 +27,7 @@ impl Default for GodotSharedData {
         }
     }
 }
+
 #[derive(Component)]
 struct Position {
     x: f32,
@@ -43,7 +43,7 @@ struct Velocity {
 #[godot_api]
 impl BevyECS {
     fn bevy_startup(mut data: ResMut<GodotSharedData>, mut commands: Commands) {
-        let num_particles = 50000;
+        let num_particles = 300;
         let mut rng = rand::thread_rng();
         data.positions.resize(num_particles, Vec2 {x: -1.0, y: -1.0});
 
@@ -83,11 +83,16 @@ impl BevyECS {
         
         let mut ret = Array::default();
 
-
-        for position in &self.app.world.get_resource::<GodotSharedData>().unwrap().positions {
-            ret.push(Vector2 { x: position.x, y: position.y });
+        let resource = &self.app.world.get_resource::<GodotSharedData>();
+        match resource {
+            None => return ret,
+            Some(res) => {
+                for position in &res.positions {
+                    ret.push(Vector2 { x: position.x, y: position.y });
+                }
+            }
         }
-
+            
         return ret
     }
 

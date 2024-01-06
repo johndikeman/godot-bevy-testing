@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1w30ipx4216"]
+
+[ext_resource type="Script" path="res://snowflake.gd" id="1_1fxgn"]
+
+[node name="snowflake" type="Sprite2D"]
+script = ExtResource("1_1fxgn")
+size = 40
+color = Color(0.54902, 0.72549, 0.960784, 1)
+num_points = 8
