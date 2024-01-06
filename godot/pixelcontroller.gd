@@ -12,8 +12,6 @@ func initial_populate(all_positions: Array):
 	for pos in all_positions:
 		var new_pixel = pixel.instantiate()
 		pixels.append(new_pixel)
-		new_pixel.position.x = pos[0]
-		new_pixel.position.y = pos[1]
 		pixel_parent.add_child(new_pixel)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -23,11 +21,11 @@ func _process(delta):
 		return
 	if pixels.size() == 0:
 		initial_populate(all_positions)
-		return
 
 	var ind = 0
 
 	for pos in all_positions:
-		pixels[ind].position.x = pos[0]
-		pixels[ind].position.y = pos[1]
+		var viewport_size = self.get_viewport().get_size()
+		pixels[ind].position.x = pos[0] * viewport_size.x  - viewport_size.x / 2
+		pixels[ind].position.y = pos[1] * viewport_size.y - viewport_size.y / 2
 		ind += 1

@@ -33,8 +33,8 @@ func _draw():
 
 func _process(delta: float):
 	self.set_rotation_degrees(self.rotation_degrees + _rotate_speed * 10 * delta)
-	self.set_position(self.get_position() + Vector2(_velocity_x * delta, _velocity_y * delta))
-	_velocity_y += _gravity * delta
+	# self.set_position(self.get_position() + Vector2(_velocity_x * delta, _velocity_y * delta))
+	# _velocity_y += _gravity * delta
 
 func select_points(height: int, width: int) -> PackedVector2Array:
 	var rng = RandomNumberGenerator.new()

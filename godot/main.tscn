@@ -16,25 +16,26 @@ script = ExtResource("1_0i6p4")
 ecs = NodePath("BevyECS")
 
 [node name="pixel control center" type="ColorRect" parent="." node_paths=PackedStringArray("ecs", "pixel_parent")]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -3.0
-offset_top = -3.0
-offset_right = -3.0
-offset_bottom = -3.0
+anchors_preset = -1
+anchor_left = -0.602
+anchor_top = -0.613
+anchor_right = 0.592
+anchor_bottom = 0.606
+offset_left = 0.504089
+offset_top = 0.22403
+offset_right = 0.0159912
+offset_bottom = 0.311981
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0705882, 0.0627451, 0.0784314, 1)
+color = Color(0.00463494, 0.0324398, 0.0926592, 1)
 script = ExtResource("2_kj4mp")
 ecs = NodePath("../BevyECS")
-pixel_parent = NodePath("Camera2D")
+pixel_parent = NodePath("../Camera2D")
 
-[node name="Camera2D" type="Camera2D" parent="pixel control center"]
-position = Vector2(569, 325)
-zoom = Vector2(2, 2)
+[node name="Camera2D" type="Camera2D" parent="."]
+limit_smoothed = true
 
-[node name="fps" type="Label" parent="pixel control center/Camera2D"]
+[node name="fps" type="Label" parent="Camera2D"]
 offset_left = -142.0
 offset_top = -78.0
 offset_right = -97.0
