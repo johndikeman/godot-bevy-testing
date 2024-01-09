@@ -27,6 +27,8 @@ func _process(delta):
 		else:
 			var new_pixel = pixel.instantiate()
 			pixels[eid] = new_pixel
+			pixels[eid].position.x = pos[0] * viewport_size.x  - viewport_size.x / 2
+			pixels[eid].position.y = pos[1] * viewport_size.y - viewport_size.y / 2
 			pixel_parent.add_child(new_pixel)
 
 	# we remove ones that are real from this list as we go so if there's any remaining they are dead

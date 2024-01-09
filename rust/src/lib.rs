@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use godot::engine::Node;
 use godot::prelude::*;
 use rand::Rng;
+use std::time::Duration;
 
 use bevy::utils::HashMap;
 struct MyExtension;
@@ -17,6 +18,23 @@ struct BevyECS {
 #[derive(Resource)]
 struct GodotSharedData {
     positions: HashMap<u32, Vec2>,
+}
+
+#[derive(Resource)]
+struct NewSnowflakeTimer {
+    timer: Timer,
+    min_time: f32,
+    max_time: f32,
+}
+
+impl Default for NewSnowflakeTimer {
+    fn default() -> NewSnowflakeTimer {
+        Self {
+            timer: Timer::from_seconds(1.0, TimerMode::Repeating),
+            min_time: 0.1,
+            max_time: 0.5,
+        }
+    }
 }
 
 #[derive(Resource)]
@@ -124,13 +142,51 @@ impl BevyECS {
             if position.y >= 1.0 {
                 data.positions.remove(&entity.index());
                 commands.entity(entity).despawn();
-                let eid = entity.index();
-                let str: String = format!("entity {eid} despawned");
-                godot_print!("{}", str);
-                let keys: Vec<&u32> = data.positions.keys().collect();
-                godot_print!("{:?}", data.positions);
             }
         }
+    }
+
+    fn spawn_new_flakes(
+        time: Res<Time>,
+        mut timer_res: ResMut<NewSnowflakeTimer>,
+        mut commands: Commands,
+    ) {
+        timer_res.timer.tick(time.delta());
+        if timer_res.timer.finished() {
+            let mut rng = rand::thread_rng();
+            let position = Vec2 {
+                x: rng.gen_range(0.0..1.0),
+                y: -0.1,
+            };
+
+            let velocity = Vec2 {
+                x: rng.gen_range(-0.1..0.1),
+                y: rng.gen_range(-0.1..0.1),
+            };
+
+            commands.spawn((
+                Position {
+                    x: position.x,
+                    y: position.y,
+                },
+                Velocity {
+                    x: velocity.x,
+                    y: velocity.y,
+                },
+            ));
+            // reset the timer
+            let seconds: f32 = rng.gen_range(timer_res.min_time..timer_res.max_time);
+            timer_res
+                .timer
+                .set_duration(Duration::from_secs_f32(seconds));
+        }
+    }
+
+    #[func]
+    fn edit_snowflake_timer_params(&mut self, min_time: f32, max_time: f32) {
+        let resource = &mut self.app.world.resource_mut::<NewSnowflakeTimer>();
+        resource.max_time = max_time;
+        resource.min_time = min_time;
     }
 
     #[func]
@@ -170,15 +226,21 @@ impl INode for BevyECS {
 
     fn ready(&mut self) {
         self.app.init_resource::<GodotSharedData>();
+        self.app.init_resource::<NewSnowflakeTimer>();
         self.app.init_resource::<Gravity>();
 
         self.app.add_plugins(MinimalPlugins);
 
         self.app.add_systems(Startup, BevyECS::bevy_startup);
+
         self.app.add_systems(Update, BevyECS::send_godot_data);
         self.app.add_systems(Update, BevyECS::move_with_velocity);
-        self.app.add_systems(Update, BevyECS::should_be_cleaned_up.after(BevyECS::send_godot_data));
+        self.app.add_systems(
+            Update,
+            BevyECS::should_be_cleaned_up.after(BevyECS::send_godot_data),
+        );
         self.app.add_systems(Update, BevyECS::gravity);
+        self.app.add_systems(Update, BevyECS::spawn_new_flakes);
 
         godot_print!("bevy ecs ready!"); // Prints to the Godot console
     }
