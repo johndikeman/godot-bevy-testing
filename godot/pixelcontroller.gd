@@ -6,20 +6,10 @@ extends ColorRect
 
 var pixels := {}
 
-# Called when the node enters the scene tree for the first time.
-func initial_populate(all_positions: Dictionary):
-	 
-	for eid in all_positions.keys():
-
-		var new_pixel = pixel.instantiate()
-		pixels[eid] = new_pixel
-		pixel_parent.add_child(new_pixel)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	var all_positions = ecs.get_shared_data()
-	if all_positions.size() == 0:
-		return
 	
 	# print_debug(all_positions)
 
@@ -42,6 +32,7 @@ func _process(delta):
 	# we remove ones that are real from this list as we go so if there's any remaining they are dead
 	for dead_snowflake in current_instance_ids:
 		pixels[dead_snowflake].queue_free()
+		pixels.erase(dead_snowflake)
 
 	# problem: rust is adding/removing the entities
 	# we're tracking a dictionary of references for the display for these entities

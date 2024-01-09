@@ -128,7 +128,7 @@ impl BevyECS {
                 let str: String = format!("entity {eid} despawned");
                 godot_print!("{}", str);
                 let keys: Vec<&u32> = data.positions.keys().collect();
-                godot_print!("{:?}", keys);
+                godot_print!("{:?}", data.positions);
             }
         }
     }
@@ -177,7 +177,7 @@ impl INode for BevyECS {
         self.app.add_systems(Startup, BevyECS::bevy_startup);
         self.app.add_systems(Update, BevyECS::send_godot_data);
         self.app.add_systems(Update, BevyECS::move_with_velocity);
-        self.app.add_systems(Update, BevyECS::should_be_cleaned_up.before(BevyECS::send_godot_data));
+        self.app.add_systems(Update, BevyECS::should_be_cleaned_up.after(BevyECS::send_godot_data));
         self.app.add_systems(Update, BevyECS::gravity);
 
         godot_print!("bevy ecs ready!"); // Prints to the Godot console
