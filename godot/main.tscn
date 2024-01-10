@@ -47,16 +47,20 @@ script = ExtResource("3_jbrj7")
 
 [node name="BevyECS" type="BevyECS" parent="."]
 
-[node name="minmaxcontrols" type="VBoxContainer" parent="." node_paths=PackedStringArray("min_slider", "max_slider", "min_label", "max_label", "bevy")]
+[node name="minmaxcontrols" type="VBoxContainer" parent="." node_paths=PackedStringArray("min_slider", "max_slider", "min_label", "max_label", "wind_label", "wind_slider", "grav_label", "grav_slider", "bevy")]
 offset_left = -539.0
 offset_top = 109.0
-offset_right = 549.0
-offset_bottom = 159.0
+offset_right = -227.0
+offset_bottom = 311.0
 script = ExtResource("4_eotcd")
 min_slider = NodePath("Panel2/minslider")
 max_slider = NodePath("Panel/maxslider")
 min_label = NodePath("Panel2/minlabel")
 max_label = NodePath("Panel/maxlabel")
+wind_label = NodePath("Panel3/wind")
+wind_slider = NodePath("Panel3/windslider")
+grav_label = NodePath("Panel4/gravity")
+grav_slider = NodePath("Panel4/gravslider")
 bevy = NodePath("../BevyECS")
 
 [node name="Panel" type="HBoxContainer" parent="minmaxcontrols"]
@@ -66,7 +70,7 @@ size_flags_vertical = 3
 [node name="maxlabel" type="RichTextLabel" parent="minmaxcontrols/Panel"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "max:"
+text = "max flake interval: 0.5"
 fit_content = true
 
 [node name="maxslider" type="HSlider" parent="minmaxcontrols/Panel"]
@@ -75,7 +79,7 @@ size_flags_horizontal = 3
 min_value = 0.001
 max_value = 2.0
 step = 0.001
-value = 0.001
+value = 0.5
 
 [node name="Panel2" type="HBoxContainer" parent="minmaxcontrols"]
 layout_mode = 2
@@ -84,7 +88,7 @@ size_flags_vertical = 3
 [node name="minlabel" type="RichTextLabel" parent="minmaxcontrols/Panel2"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "min:"
+text = "min flake interval: 0.1"
 fit_content = true
 
 [node name="minslider" type="HSlider" parent="minmaxcontrols/Panel2"]
@@ -93,4 +97,38 @@ size_flags_horizontal = 3
 min_value = 0.001
 max_value = 0.5
 step = 0.001
-value = 0.001
+value = 0.1
+
+[node name="Panel3" type="HBoxContainer" parent="minmaxcontrols"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="wind" type="RichTextLabel" parent="minmaxcontrols/Panel3"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "wind: 0"
+fit_content = true
+
+[node name="windslider" type="HSlider" parent="minmaxcontrols/Panel3"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -2.0
+max_value = 2.0
+step = 0.1
+
+[node name="Panel4" type="HBoxContainer" parent="minmaxcontrols"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="gravity" type="RichTextLabel" parent="minmaxcontrols/Panel4"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "gravity: 0.5"
+fit_content = true
+
+[node name="gravslider" type="HSlider" parent="minmaxcontrols/Panel4"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 5.0
+step = 0.1
+value = 0.5

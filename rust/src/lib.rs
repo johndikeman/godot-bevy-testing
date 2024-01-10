@@ -48,10 +48,8 @@ impl Default for Gravity {
     }
 }
 
-#[derive(Resource)]
-struct Wind {
-    value: f32,
-}
+#[derive(Resource, Default)]
+struct Wind(f32);
 
 impl Default for GodotSharedData {
     fn default() -> GodotSharedData {
@@ -133,6 +131,12 @@ impl BevyECS {
         }
     }
 
+    fn wind(wind: Res<Wind>, time: Res<Time>, mut positions: Query<&mut Position>) {
+        for mut position in &mut positions {
+            position.x += wind.0 * time.delta_seconds();
+        }
+    }
+
     fn should_be_cleaned_up(
         mut data: ResMut<GodotSharedData>,
         mut commands: Commands,
@@ -190,6 +194,18 @@ impl BevyECS {
     }
 
     #[func]
+    fn edit_wind(&mut self, wind_val: f32) {
+        let resource = &mut self.app.world.resource_mut::<Wind>();
+        resource.0 = wind_val;
+    }
+
+    #[func]
+    fn edit_gravity(&mut self, gravity_val: f32) {
+        let resource = &mut self.app.world.resource_mut::<Gravity>();
+        resource.value = gravity_val;
+    }
+
+    #[func]
     fn get_shared_data(&mut self) -> Dictionary {
         let mut ret = Dictionary::new();
 
@@ -228,12 +244,14 @@ impl INode for BevyECS {
         self.app.init_resource::<GodotSharedData>();
         self.app.init_resource::<NewSnowflakeTimer>();
         self.app.init_resource::<Gravity>();
+        self.app.init_resource::<Wind>();
 
         self.app.add_plugins(MinimalPlugins);
 
         self.app.add_systems(Startup, BevyECS::bevy_startup);
 
         self.app.add_systems(Update, BevyECS::send_godot_data);
+        self.app.add_systems(Update, BevyECS::wind);
         self.app.add_systems(Update, BevyECS::move_with_velocity);
         self.app.add_systems(
             Update,
