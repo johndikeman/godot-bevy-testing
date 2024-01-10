@@ -22,6 +22,8 @@ func _process(delta):
 		if pixels.has(eid):
 			pixels[eid].position.x = pos[0] * viewport_size.x  - viewport_size.x / 2
 			pixels[eid].position.y = pos[1] * viewport_size.y - viewport_size.y / 2
+			# we've set the rotation for each one to be the z value of the return from rust
+			pixels[eid].set_rotation_degrees(pos[2])
 			# if we found data for the instance, remove it from our tracker list
 			current_instance_ids.erase(eid)
 		else:
@@ -29,6 +31,8 @@ func _process(delta):
 			pixels[eid] = new_pixel
 			pixels[eid].position.x = pos[0] * viewport_size.x  - viewport_size.x / 2
 			pixels[eid].position.y = pos[1] * viewport_size.y - viewport_size.y / 2
+			# we've set the rotation for each one to be the z value of the return from rust
+			pixels[eid].set_rotation_degrees(pos[2])
 			pixel_parent.add_child(new_pixel)
 
 	# we remove ones that are real from this list as we go so if there's any remaining they are dead

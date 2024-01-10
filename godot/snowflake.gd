@@ -16,10 +16,6 @@ func _ready():
 	var rng = RandomNumberGenerator.new()
 	# create the image texture we need
 	_selected_points = select_points(size, size)
-	_velocity_y = rng.randf_range(1,.5)
-	_velocity_x = 0
-	
-	_rotate_speed = rng.randf_range(-1,1)
 	var s = rng.randf_range(1,5)
 	self.scale = Vector2(s,s)
 	
@@ -30,11 +26,6 @@ func _draw():
 	# update the sprite texture with the newly completed image
 	self.draw_polyline(_selected_points, color, 1)
 	
-
-func _process(delta: float):
-	self.set_rotation_degrees(self.rotation_degrees + _rotate_speed * 10 * delta)
-	# self.set_position(self.get_position() + Vector2(_velocity_x * delta, _velocity_y * delta))
-	# _velocity_y += _gravity * delta
 
 func select_points(height: int, width: int) -> PackedVector2Array:
 	var rng = RandomNumberGenerator.new()

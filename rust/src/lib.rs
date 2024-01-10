@@ -3,8 +3,8 @@ use godot::engine::Node;
 use godot::prelude::*;
 use rand::Rng;
 use std::time::Duration;
-
 use bevy::utils::HashMap;
+
 struct MyExtension;
 
 #[derive(GodotClass)]
@@ -16,8 +16,14 @@ struct BevyECS {
 }
 
 #[derive(Resource)]
-struct GodotSharedData {
-    positions: HashMap<u32, Vec2>,
+struct GodotSharedData(HashMap<u32, Vec3>);
+
+impl Default for GodotSharedData {
+    fn default() -> GodotSharedData {
+        Self ( 
+            HashMap::new(),
+        ) 
+    }
 }
 
 #[derive(Resource)]
@@ -51,13 +57,6 @@ impl Default for Gravity {
 #[derive(Resource, Default)]
 struct Wind(f32);
 
-impl Default for GodotSharedData {
-    fn default() -> GodotSharedData {
-        Self {
-            positions: HashMap::new(),
-        }
-    }
-}
 
 #[derive(Component)]
 struct Position {
@@ -72,7 +71,11 @@ struct Velocity {
 }
 
 #[derive(Component)]
-struct OffScreen();
+struct RotationVelocity(f32);
+
+#[derive(Component)]
+struct Rotation(f32);
+
 
 #[godot_api]
 impl BevyECS {
@@ -100,19 +103,21 @@ impl BevyECS {
                     x: velocity.x,
                     y: velocity.y,
                 },
+                Rotation( 0.0 ),
+                RotationVelocity(0.0)
             ));
-            data.positions
-                .insert(entity_commands.id().index(), position);
+            data.0.insert(entity_commands.id().index(), Vec3 {x: position.x, y: position.y, z: 0.0});
         }
     }
 
-    fn send_godot_data(mut data: ResMut<GodotSharedData>, particles: Query<(Entity, &Position)>) {
-        for (entity, position) in &particles {
-            data.positions.insert(
+    fn send_godot_data(mut data: ResMut<GodotSharedData>, particles: Query<(Entity, &Position, &Rotation)>) {
+        for (entity, position, rotation) in &particles {
+            data.0.insert(
                 entity.index(),
-                Vec2 {
+                Vec3 {
                     x: position.x,
                     y: position.y,
+                    z: rotation.0
                 },
             );
         }
@@ -131,9 +136,17 @@ impl BevyECS {
         }
     }
 
-    fn wind(wind: Res<Wind>, time: Res<Time>, mut positions: Query<&mut Position>) {
-        for mut position in &mut positions {
+    fn flake_rotation(time: Res<Time>, mut rotations: Query<(&mut Rotation, &RotationVelocity)>) {
+        for (mut rotation, r_v) in &mut rotations {
+            rotation.0 += r_v.0 * 1000.0 * time.delta_seconds();
+        }
+    }
+
+    fn wind(wind: Res<Wind>, time: Res<Time>, mut positions: Query<(&mut Position, &mut RotationVelocity)>) {
+        // directly apply the wind value to the positions since it's a fixed velocity wind?
+        for (mut position, mut r_vel) in &mut positions {
             position.x += wind.0 * time.delta_seconds();
+            r_vel.0 -= wind.0 * time.delta_seconds();
         }
     }
 
@@ -144,7 +157,7 @@ impl BevyECS {
     ) {
         for (entity, position) in &positions {
             if position.y >= 1.0 {
-                data.positions.remove(&entity.index());
+                data.0.remove(&entity.index());
                 commands.entity(entity).despawn();
             }
         }
@@ -177,6 +190,8 @@ impl BevyECS {
                     x: velocity.x,
                     y: velocity.y,
                 },
+                Rotation( rng.gen_range(0.0..180.0) ),
+                RotationVelocity(0.0)
             ));
             // reset the timer
             let seconds: f32 = rng.gen_range(timer_res.min_time..timer_res.max_time);
@@ -213,12 +228,13 @@ impl BevyECS {
         match resource {
             None => return ret,
             Some(res) => {
-                for (entity, position) in &res.positions {
+                for (entity, data) in &res.0 {
                     ret.insert(
                         *entity,
-                        Vector2 {
-                            x: position.x,
-                            y: position.y,
+                        Vector3 {
+                            x: data.x,
+                            y: data.y,
+                            z: data.z
                         },
                     );
                 }
@@ -252,6 +268,7 @@ impl INode for BevyECS {
 
         self.app.add_systems(Update, BevyECS::send_godot_data);
         self.app.add_systems(Update, BevyECS::wind);
+        self.app.add_systems(Update, BevyECS::flake_rotation);
         self.app.add_systems(Update, BevyECS::move_with_velocity);
         self.app.add_systems(
             Update,
