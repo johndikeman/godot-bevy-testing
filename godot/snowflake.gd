@@ -1,30 +1,22 @@
-extends Sprite2D
+extends Node2D 
 
 @export var size: int
 @export var color: Color
 @export var num_points: int
+@export var sprite: SnowflakeLines
 var image: Image
-var _selected_points: Array
-# dg/s ?
-var _rotate_speed: float
-var _velocity_y: float
-var _velocity_x: float
-var _gravity: float = 10
 
 
 func _ready():
 	var rng = RandomNumberGenerator.new()
 	# create the image texture we need
-	_selected_points = select_points(size, size)
+	var _selected_points = select_points(size, size)
 	var s = rng.randf_range(1,5)
+
 	self.scale = Vector2(s,s)
-	
-func _draw():
-	if !_selected_points:
-		return
-		
-	# update the sprite texture with the newly completed image
-	self.draw_polyline(_selected_points, color, 1)
+	sprite.position = Vector2(size / -2,size / -2)
+	sprite.set_points(_selected_points)
+	sprite.color = color
 	
 
 func select_points(height: int, width: int) -> PackedVector2Array:

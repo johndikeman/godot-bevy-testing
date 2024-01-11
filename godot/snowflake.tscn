@@ -1,9 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://c1w30ipx4216"]
+[gd_scene load_steps=3 format=3 uid="uid://c1w30ipx4216"]
 
 [ext_resource type="Script" path="res://snowflake.gd" id="1_1fxgn"]
+[ext_resource type="Script" path="res://snowflake_lines.gd" id="2_c7pr0"]
 
-[node name="snowflake" type="Sprite2D"]
+[node name="snowflake" type="Node2D" node_paths=PackedStringArray("sprite")]
 script = ExtResource("1_1fxgn")
 size = 40
 color = Color(0.670588, 0.8, 0.972549, 1)
 num_points = 8
+sprite = NodePath("snowflake_lines")
+
+[node name="snowflake_lines" type="Sprite2D" parent="."]
+script = ExtResource("2_c7pr0")
